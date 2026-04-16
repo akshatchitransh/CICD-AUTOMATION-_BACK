@@ -28,7 +28,7 @@ app.get("/webhook", (req, res) => {
 
   console.log("FULL BOY:", JSON.stringify(data, null, 2));
 
-  res.sendStatus(200).send({webhook:"ye wala route woeking"});
+  res.send({webhook:"ye wala route woeking"});
 });
 
 const PORT = process.env.PORT;

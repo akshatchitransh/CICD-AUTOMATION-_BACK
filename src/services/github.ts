@@ -32,3 +32,17 @@ export const extractLogs = (zipBuffer: Buffer) => {
 
   return allLogs;
 };
+
+
+export const filterErrors = (logs: string) => {
+  const lines = logs.split("\n");
+
+  const important = lines.filter((line) =>
+    line.toLowerCase().includes("error") ||
+    line.toLowerCase().includes("failed") ||
+    line.toLowerCase().includes("npm err") ||
+    line.toLowerCase().includes("cannot")
+  );
+
+  return important;
+};

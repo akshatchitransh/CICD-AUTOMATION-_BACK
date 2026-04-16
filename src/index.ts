@@ -26,7 +26,7 @@ app.post("/webhook", (req, res) => {
 
   const data = req.body;
 
-  console.log("FULL BODY:", JSON.stringify(data, null, 2));
+  console.log("FULL BOY:", JSON.stringify(data, null, 2));
 
   res.sendStatus(200);
 });

@@ -6,8 +6,10 @@ import { getLogs } from "./services/github.js";
 
 
 
+
 dotenv.config();
 const app = express();
+const PORT = process.env.PORT||3535
 
 app.use(cors())
 app.use(express.json());
@@ -53,4 +55,8 @@ app.post("/webhook", async (req, res) => {
     console.error("ERROR:", err);
     res.sendStatus(500);
   }
+});
+
+app.listen(PORT,()=>{
+   console.log("port listenig")
 });

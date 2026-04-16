@@ -21,14 +21,14 @@ app.post('/analyse',(req:any,res:any)=>{
    res.send({ message: "analysing" })
 })
 
-app.post("/webhook", (req, res) => {
+app.get("/webhook", (req, res) => {
   console.log("🔥 Webhook Triggered!");
 
   const data = req.body;
 
   console.log("FULL BOY:", JSON.stringify(data, null, 2));
 
-  res.sendStatus(200);
+  res.sendStatus(200).json({webhook:"ye wala route woeking"});
 });
 
 const PORT = process.env.PORT;

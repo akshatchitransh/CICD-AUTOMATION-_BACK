@@ -35,11 +35,13 @@ app.get("/webhook", (req, res) => {
 app.post("/webhook", (req, res) => {
   console.log("🔥 Webhook Triggered!");
 
-  const data = req.body;
+  const runId = req.body.workflow_run?.id;
+  const status = req.body.workflow_run?.conclusion;
 
-  console.log("FULL BODY:", JSON.stringify(data, null, 2));
+  console.log("Run ID:", runId);
+  console.log("Status:", status);
 
-  res.status(200).send({ message: "Webhook received" });
+  res.status(200).json({ message: "ok" });
 });
 
 

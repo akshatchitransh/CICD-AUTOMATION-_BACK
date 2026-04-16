@@ -31,6 +31,18 @@ app.get("/webhook", (req, res) => {
   res.send({webhook:"ye wala route woeking"});
 });
 
+
+app.post("/webhook", (req, res) => {
+  console.log("🔥 Webhook Triggered!");
+
+  const data = req.body;
+
+  console.log("FULL BODY:", JSON.stringify(data, null, 2));
+
+  res.status(200).send({ message: "Webhook received" });
+});
+
+
 const PORT = process.env.PORT;
 app.listen(PORT,()=>{
    console.log("server started")

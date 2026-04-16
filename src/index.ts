@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectdb } from "./utils/db.js";
 import cors from "cors"
-import { getLogs } from "./services/github.js";
+import { getLogs, extractLogs } from "./services/github.js";
 
 
 
@@ -44,9 +44,14 @@ app.post("/webhook", async (req, res) => {
     console.log("Status:", status);
 
     if (status === "failure") {
-      const logs = await getLogs(runId);
+     const logs = await getLogs(runId);
 
-      console.log("🔥 Logs fetched!");
+console.log("🔥 Logs fetched!");
+
+const readableLogs = extractLogs(logs);
+
+console.log("📄 LOGS:");
+console.log(readableLogs.slice(0, 500));
       console.log("Size:", logs.length);
     }
 

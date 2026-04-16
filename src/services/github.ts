@@ -11,7 +11,7 @@ export const getLogs = async (runId: number) => {
       Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
       Accept: "application/vnd.github+json",
     },
-    responseType: "arraybuffer",
+    responseType: "arraybuffer", // 🔥 zip milega
   });
 
   return res.data;

@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import { connectdb } from "./utils/db.js";
 import cors from "cors"
+import { getLogs } from "./services/github.js";
 
 
 
@@ -32,20 +33,24 @@ app.get("/webhook", (req, res) => {
 });
 
 
-app.post("/webhook", (req, res) => {
-  console.log("🔥 Webhook Triggered!");
+app.post("/webhook", async (req, res) => {
+  try {
+    const runId = req.body.workflow_run?.id;
+    const status = req.body.workflow_run?.conclusion;
 
-  const runId = req.body.workflow_run?.id;
-  const status = req.body.workflow_run?.conclusion;
+    console.log("Run ID:", runId);
+    console.log("Status:", status);
 
-  console.log("Run ID:", runId);
-  console.log("Status:", status);
+    if (status === "failure") {
+      const logs = await getLogs(runId);
 
-  res.status(200).json({ message: "ok" });
-});
+      console.log("🔥 Logs fetched!");
+      console.log("Size:", logs.length);
+    }
 
-
-const PORT = process.env.PORT||3000;
-app.listen(PORT,()=>{
-   console.log("server started")
+    res.status(200).json({ message: "ok" });
+  } catch (err) {
+    console.error("ERROR:", err);
+    res.sendStatus(500);
+  }
 });

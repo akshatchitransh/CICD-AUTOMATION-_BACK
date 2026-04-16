@@ -1,0 +1,1 @@
+export const Backend_URI = "https://cicd-automation-back.onrender.com/"

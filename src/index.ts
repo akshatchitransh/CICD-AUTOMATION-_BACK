@@ -4,7 +4,7 @@ import { connectdb } from "./utils/db.js";
 import cors from "cors"
 import { getLogs, extractLogs, filterErrors } from "./services/github.js";
 
-
+import { analyzeErrors } from "./services/ai.js";
 
 
 dotenv.config();
@@ -45,19 +45,31 @@ app.post("/webhook", async (req, res) => {
 
     if (status === "failure") {
 
+      const logs = await getLogs(runId);
 
-const logs = await getLogs(runId);
+      const readableLogs = extractLogs(logs);
 
-const readableLogs = extractLogs(logs);
+      const errors = filterErrors(readableLogs);
 
-const errors = filterErrors(readableLogs);
+      console.log(" ERRORS:");
+      console.log(errors.slice(0, 10));
 
-console.log("🚨 ERRORS:");
-console.log(errors.slice(0, 10));
       console.log("Size:", logs.length);
+
+      // 🔥 AI PART START
+      if (errors.length > 0) {
+        const aiResponse = await analyzeErrors(errors.slice(0, 5));
+
+        console.log("AI RESPONSE:");
+        console.log(aiResponse);
+      } else {
+        console.log("No errors found for AI analysis");
+      }
+      
     }
 
     res.status(200).json({ message: "ok" });
+
   } catch (err) {
     console.error("ERROR:", err);
     res.sendStatus(500);

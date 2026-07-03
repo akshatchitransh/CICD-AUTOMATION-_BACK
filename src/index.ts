@@ -209,6 +209,39 @@ app.get("/analytics", async (req, res) => {
 
 });
 
+app.get("/analytics/trend", async (req, res) => {
+
+  const runs = await Run.find().sort({ createdAt: 1 });
+
+  const map = new Map<string, number>();
+
+  runs.forEach((run) => {
+
+    const date = new Date(run.createdAt)
+      .toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+      });
+
+    map.set(
+      date,
+      (map.get(date) || 0) +
+        (run.status === "failure" ? 1 : 0)
+    );
+
+  });
+
+  const data = Array.from(map.entries()).map(
+    ([date, failures]) => ({
+      date,
+      failures,
+    })
+  );
+
+  res.json(data);
+
+});
+
 app.listen(PORT,()=>{
    console.log("port listenig")
 });

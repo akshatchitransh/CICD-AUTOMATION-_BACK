@@ -181,6 +181,34 @@ app.get("/runs/:id", async (req, res) => {
 
 });
 
+app.get("/analytics", async (req, res) => {
+
+  const runs = await Run.find();
+
+  const totalRuns = runs.length;
+
+  const failedRuns = runs.filter(
+    run => run.status === "failure"
+  ).length;
+
+  const successRuns = runs.filter(
+    run => run.status === "success"
+  ).length;
+
+  const successRate =
+    totalRuns === 0
+      ? 0
+      : ((successRuns / totalRuns) * 100).toFixed(1);
+
+  res.json({
+    totalRuns,
+    failedRuns,
+    successRuns,
+    successRate,
+  });
+
+});
+
 app.listen(PORT,()=>{
    console.log("port listenig")
 });

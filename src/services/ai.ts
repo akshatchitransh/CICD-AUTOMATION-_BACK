@@ -6,29 +6,38 @@ const ai = new GoogleGenAI({
 
 export const analyzeErrors = async (errors: string[]) => {
 
-  const prompt = `
+const prompt = `
 You are a Senior DevOps Engineer.
 
-Analyze these CI/CD errors.
+Analyze the following CI/CD workflow errors.
 
 Errors:
+
 ${errors.join("\n")}
 
 Return ONLY valid JSON.
+
+Do NOT write markdown.
+Do NOT wrap the response inside \`\`\`.
+Do NOT explain anything outside JSON.
+
+Schema:
 
 {
   "rootCause": "",
   "explanation": "",
   "fix": "",
-  "commands": [],
+  "commands": [
+    ""
+  ],
   "confidence": 95
 }
 
 Rules:
-- Do not return markdown.
-- Do not wrap the JSON in \`\`\`.
-- Commands must be an array of terminal commands.
-- Confidence must be between 0 and 100.
+
+- commands must contain executable terminal commands.
+- confidence must be an integer from 0 to 100.
+- explanation should be concise.
 `;
 
   const response = await ai.models.generateContent({
@@ -36,22 +45,27 @@ Rules:
     contents: prompt,
   });
 
-  const text = response.text ?? "";
+const raw = response.text ?? "";
 
-  try {
+const cleaned = raw
+  .replace(/```json/g, "")
+  .replace(/```/g, "")
+  .trim();
 
-    return JSON.parse(text);
+try {
 
-  } catch {
+  return JSON.parse(cleaned);
 
-    return {
-      rootCause: "Unable to analyze.",
-      explanation: text,
-      fix: "Try checking the workflow logs manually.",
-      commands: [],
-      confidence: 0,
-    };
+} catch {
 
-  }
+  return {
+    rootCause: "Unable to analyze.",
+    explanation: cleaned,
+    fix: "Check workflow logs manually.",
+    commands: [],
+    confidence: 0,
+  };
+
+}
 
 };

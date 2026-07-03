@@ -62,15 +62,27 @@ app.post("/webhook", async (req, res) => {
 
       console.log("Size:", logs.length);
 
-      let aiResponse = "";
+      let aiResponse = "AI analysis unavailable.";
 
       if (errors.length > 0) {
 
-      aiResponse = (await analyzeErrors(errors.slice(0, 5))) || "";
+        try {
 
-        console.log("AI RESPONSE:");
+          aiResponse =
+            (await analyzeErrors(errors.slice(0, 5))) ||
+            aiResponse;
 
-        console.log(aiResponse);
+          console.log("AI RESPONSE:");
+
+          console.log(aiResponse);
+
+        } catch (err) {
+
+          console.log("AI ERROR:");
+
+          console.log(err);
+
+        }
 
       } else {
 
@@ -99,12 +111,12 @@ app.post("/webhook", async (req, res) => {
     }
 
     res.status(200).json({
-      message: "ok"
+      message: "ok",
     });
 
   } catch (err) {
 
-    console.error("ERROR:", err);
+    console.error("WEBHOOK ERROR:", err);
 
     res.sendStatus(500);
 

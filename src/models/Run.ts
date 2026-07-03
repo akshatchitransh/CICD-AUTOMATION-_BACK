@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const RunSchema = new mongoose.Schema(
   {
+   
     runId: {
       type: String,
       required: true,
@@ -26,6 +27,9 @@ const RunSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+     workflowUrl: {
+  type: String,
+},
 
     aiResponse: {
       rootCause: {
@@ -52,6 +56,7 @@ const RunSchema = new mongoose.Schema(
         type: Number,
         default: 0,
       },
+      
     },
   },
   {

@@ -105,6 +105,8 @@ app.post("/webhook", async (req, res) => {
         status,
 
         logs: readableLogs,
+        workflowUrl:
+  req.body.workflow_run?.html_url || "",
 
         errors,
 

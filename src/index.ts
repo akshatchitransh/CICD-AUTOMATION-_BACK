@@ -62,7 +62,13 @@ app.post("/webhook", async (req, res) => {
 
       console.log("Size:", logs.length);
 
-      let aiResponse = "AI analysis unavailable.";
+      let aiResponse = {
+  rootCause: "AI analysis unavailable.",
+  explanation: "",
+  fix: "",
+  commands: [],
+  confidence: 0,
+};
 
       if (errors.length > 0) {
 

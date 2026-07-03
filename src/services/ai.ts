@@ -1,29 +1,57 @@
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY!,
 });
 
 export const analyzeErrors = async (errors: string[]) => {
-  const prompt = `
-You are a DevOps expert.
 
-These are CI/CD errors:
+  const prompt = `
+You are a Senior DevOps Engineer.
+
+Analyze these CI/CD errors.
+
+Errors:
 ${errors.join("\n")}
 
-Explain:
-- What is the issue
-- Why it happened
-- Exact steps to fix it
+Return ONLY valid JSON.
+
+{
+  "rootCause": "",
+  "explanation": "",
+  "fix": "",
+  "commands": [],
+  "confidence": 95
+}
+
+Rules:
+- Do not return markdown.
+- Do not wrap the JSON in \`\`\`.
+- Commands must be an array of terminal commands.
+- Confidence must be between 0 and 100.
 `;
 
-  const response = await client.chat.completions.create({
-    model: "gpt-4.1-mini",
-    messages: [
-      { role: "system", content: "You are an expert CI/CD debugger." },
-      { role: "user", content: prompt },
-    ],
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: prompt,
   });
-//@ts-ignore
-  return response.choices[0].message.content;
+
+  const text = response.text ?? "";
+
+  try {
+
+    return JSON.parse(text);
+
+  } catch {
+
+    return {
+      rootCause: "Unable to analyze.",
+      explanation: text,
+      fix: "Try checking the workflow logs manually.",
+      commands: [],
+      confidence: 0,
+    };
+
+  }
+
 };
